@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package protocol;
+
+service UI {
+    rpc Ping(PingRequest) returns (PingReply) {}
+    rpc AskRule (Connection) returns (Rule) {}
+}
+
+message Event {
+    string time = 1;
+    Connection connection = 2;
+    Rule rule = 3;
+}
+
+message Statistics {
+    string daemon_version = 1;
+    uint64 rules = 2;
+    uint64 uptime = 3;
+	uint64 dns_responses = 4;
+	uint64 connections  = 5;
+	uint64 ignored = 6;
+	uint64 accepted = 7;
+	uint64 dropped = 8;
+	uint64 rule_hits = 9;
+	uint64 rule_misses = 10;
+	map<string, uint64> by_proto = 11;
+	map<string, uint64> by_address = 12;
+	map<string, uint64> by_host = 13;
+	map<string, uint64> by_port = 14;
+	map<string, uint64> by_uid = 15;
+	map<string, uint64> by_executable = 16;
+    repeated Event events = 17;
+}
+
+message PingRequest {
+    uint64 id = 1;
+    Statistics stats = 2;
+}
+
+message PingReply {
+    uint64 id = 1;
+}
+
+message Connection {
+    string protocol = 1;
+    string src_ip = 2;
+    uint32 src_port = 3;
+    string dst_ip = 4;
+    string dst_host = 5;
+    uint32 dst_port = 6;
+    uint32 user_id = 7;
+    uint32 process_id = 8;
+    string process_path = 9;
+    repeated string process_args = 10;
+}
+
+message Operator {
+    string type = 1;
+    string operand = 2;
+    string data = 3;
+}
+
+message Rule {
+    string name = 1;
+    string action = 2;
+    string duration = 3;
+    Operator operator = 4;
+}
